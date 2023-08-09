@@ -36,7 +36,7 @@ namespace GitVersionInfo
             if (match.Success)
             {
                result = new SemVersion(
-                    tag: input,
+                    tag: input.TrimStart('V', 'v'),
                     major: int.Parse(match.Groups["major"].Value),
                     minor: int.Parse(match.Groups["minor"].Value),
                     patch: int.Parse(match.Groups["patch"].Value),

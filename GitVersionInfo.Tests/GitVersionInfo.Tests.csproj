@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
+	  <LangVersion>10</LangVersion>
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
