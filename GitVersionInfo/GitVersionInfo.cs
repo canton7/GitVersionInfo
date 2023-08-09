@@ -31,6 +31,11 @@ namespace GitVersionInfo
 
                 string fullSha = Exec("rev-parse HEAD");
                 string shortSha = Exec("rev-parse --short HEAD");
+                string branch = Exec("rev-parse --abbrev-ref HEAD");
+                if (branch == "HEAD")
+                {
+                    branch = "";
+                }
 
                 // Do we have a tag checked out currently?
                 var tag = FindAndSortTags(Exec("tag --points-at HEAD")).FirstOrDefault();
@@ -62,7 +67,14 @@ namespace GitVersionInfo
                     }
                 }
 
-                tag ??= new SemVersion("0.0.0", 0, 0, 0, null, "", "");
+                if (tag == null)
+                {
+                    // We'll call the tag "0.0.0", and count the number of commits on the current branch
+                    commitsSinceTagFirstParent = Exec($"rev-list --count --first-parent HEAD");
+                    commitsSinceTag = Exec($"rev-list --count HEAD");
+
+                    tag = new SemVersion("0.0.0", 0, 0, 0, null, "", "");
+                }
 
                 Version = new TaskItem(tag.Tag, new Dictionary<string, object>()
                 {
@@ -75,6 +87,7 @@ namespace GitVersionInfo
                     { "IsTagged", isTagged },
                     { "CommitsSinceTag", commitsSinceTag },
                     { "CommitsSinceTagFirstParent",  commitsSinceTagFirstParent },
+                    { "Branch", branch },
                     { "IsDirty", isDirty },
                     { "FullSha", fullSha },
                     { "ShortSha", shortSha },
